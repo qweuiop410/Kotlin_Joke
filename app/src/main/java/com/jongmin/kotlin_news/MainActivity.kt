@@ -15,42 +15,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        getApiInfo()
-    }
+        // API 호출
+        getApiInfo.getService().listUser().enqueue(object : Callback<UserVO>{
+            override fun onResponse(call: Call<UserVO>, response: Response<UserVO>) {
+                println("   onResponse   : " + response.body())
+                println("   Use Thread   : " + Thread.currentThread().name)
+            }
 
-    fun getApiInfo(){
-        println("Pass 1st Line");
-
-        val retrofit = Retrofit
-            .Builder()
-            .baseUrl("http://api.icndb.com/jokes/random/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
-        fun service() = retrofit.create(RetrofitNetwork::class.java);
-
-//        try {
-            var response = service().listUser().execute();
-            if (response.isSuccessful)
-                println("Response Success")
-            else
-                println("Response Fail")
-
-//            service().listUser().enqueue(object : Callback<UserVO> {
-//                override fun onFailure(call: Call<UserVO>?, t: Throwable?) {
-//                    println(t?.message)
-//                }
-//
-//                override fun onResponse(call: Call<UserVO>, response: Response<UserVO>) {
-//                    println(response.body())
-//                }
-//            })
-//        }
-//        catch (e:Exception)
-//        {
-//            println("   Error   " + e.message)
-//        }
-
-        println("Pass 2nd Line")
+            override fun onFailure(call: Call<UserVO>, t: Throwable) {
+                println("   onFailure   : " + t.message)
+            }
+        })
     }
 }
